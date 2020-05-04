@@ -13,6 +13,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('login', 'AuthController@login')->middleware("cors");
+    Route::post('signup', 'AuthController@signup')->middleware("cors");
+  
+    Route::group(['middleware' => ['auth:api', 'cors']], function() {
+        Route::get('logout', 'AuthController@logout');
+        Route::get('user', 'AuthController@user');
+    });
 });
+
+Route::get('token', function(){
+    return csrf_token();
+});
+
+Route::view('/{path?}', 'app');
